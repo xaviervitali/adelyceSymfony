@@ -36,9 +36,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string')]
     private $password;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: BucketList::class)]
     #[Groups(["read"])]
-
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: BucketList::class)]
     private $bucketLists;
 
     #[ORM\Column(type: 'string', length: 255)]

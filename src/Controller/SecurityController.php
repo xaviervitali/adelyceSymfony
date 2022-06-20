@@ -9,9 +9,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class SecurityController extends AbstractController
 {
 /**
-     * @Route("/api/login_token", name="login_token", methods={"POST"})
+     * @Route("/api/login", name="login_token", methods={"POST"})
      */
-    public function login_token()
+    public function login()
     {
     }
 

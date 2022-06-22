@@ -13,32 +13,29 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-#[ApiResource(    
+#[ApiResource(
     normalizationContext: ['groups' => ['read']],
-denormalizationContext: ['groups' => ['write']],)]
+    denormalizationContext: ['groups' => ['write']],
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(["read"])]
+    #[Groups("read")]
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    #[Groups(["read"])]
-
+    #[Groups("read")]
     private $email;
 
     #[ORM\Column(type: 'json')]
-
     private $roles = [];
 
     #[ORM\Column(type: 'string')]
     private $password;
 
-    #[Groups(["read"])]
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: BucketList::class)]
-    private $bucketLists;
+ 
 
     #[ORM\Column(type: 'string', length: 255)]
     private $firstName;
@@ -46,13 +43,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 255)]
     private $lastName;
 
- 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: sharedProduct::class)]
+    private $bucketList;
 
     public function __construct()
     {
-        $this->articles = new ArrayCollection();
-        $this->bucketLists = new ArrayCollection();
+        $this->bucketList = new ArrayCollection();
     }
+
 
     public function getId(): ?int
     {
@@ -124,35 +122,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    /**
-     * @return Collection<int, BucketList>
-     */
-    public function getBucketLists(): Collection
-    {
-        return $this->bucketLists;
-    }
-
-    public function addBucketList(BucketList $bucketList): self
-    {
-        if (!$this->bucketLists->contains($bucketList)) {
-            $this->bucketLists[] = $bucketList;
-            $bucketList->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeBucketList(BucketList $bucketList): self
-    {
-        if ($this->bucketLists->removeElement($bucketList)) {
-            // set the owning side to null (unless already changed)
-            if ($bucketList->getUser() === $this) {
-                $bucketList->setUser(null);
-            }
-        }
-
-        return $this;
-    }
+   
 
     public function getFirstName(): ?string
     {
@@ -178,5 +148,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-   
+    /**
+     * @return Collection<int, sharedProduct>
+     */
+    public function getBucketList(): Collection
+    {
+        return $this->bucketList;
+    }
+
+    public function addBucketList(sharedProduct $bucketList): self
+    {
+        if (!$this->bucketList->contains($bucketList)) {
+            $this->bucketList[] = $bucketList;
+            $bucketList->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBucketList(sharedProduct $bucketList): self
+    {
+        if ($this->bucketList->removeElement($bucketList)) {
+            // set the owning side to null (unless already changed)
+            if ($bucketList->getUser() === $this) {
+                $bucketList->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    
 }

@@ -1,8 +1,0 @@
-App\Entity\Article:
-  attributes:
-    normalization_context:
-      groups: ['read']
-    collection:
-      pagination:
-        enabled: false
-    order: {"name":"ASC"}

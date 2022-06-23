@@ -57,6 +57,7 @@ abstract class AbstractFixture extends Fixture
         if (count($filteredNames) === 0) {
             throw new \Exception("pas de $classname");
         }
+
         $randomReferenceName = $this->faker->randomElement($filteredNames);
         return $this->getReference($randomReferenceName);
     }

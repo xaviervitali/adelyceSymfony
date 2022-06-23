@@ -1,8 +1,0 @@
-App\Entity\BucketList: 
-  attributes:
-    normalization_context:
-      groups: ["read"]
-    denormalization_context:
-      groups: ["user:write"]
-  collectionOperations: [POST]
-  itemOperations: [GET,  PUT, DELETE]

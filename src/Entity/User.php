@@ -13,21 +13,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-#[ApiResource(
-    normalizationContext: ['groups' => ['read']],
-    denormalizationContext: ['groups' => ['write']],
-)]
+#[ApiResource(normalizationContext: ['groups' => ['read']])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups("read")]
     private $id;
+    #[Groups("read")]
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    #[Groups("read")]
     private $email;
+    #[Groups("read")]
 
     #[ORM\Column(type: 'json')]
     private $roles = [];
@@ -35,20 +32,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string')]
     private $password;
 
- 
 
+    #[Groups("read")]
     #[ORM\Column(type: 'string', length: 255)]
     private $firstName;
 
+    #[Groups("read")]
     #[ORM\Column(type: 'string', length: 255)]
     private $lastName;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: sharedProduct::class)]
+    #[Groups("read")]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: SharedProduct::class,  cascade: ["persist", "remove"])]
     private $bucketList;
+
+    #[Groups("read")]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $gender;
+
+
+    #[ORM\OneToMany(mappedBy: 'sharedWith', targetEntity: SharedProduct::class)]
+    private $sharedProducts;
+
+
 
     public function __construct()
     {
         $this->bucketList = new ArrayCollection();
+        $this->sharedProducts = new ArrayCollection();
     }
 
 
@@ -122,7 +132,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-   
+
 
     public function getFirstName(): ?string
     {
@@ -149,14 +159,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, sharedProduct>
+     * @return Collection<int, SharedProduct>
      */
     public function getBucketList(): Collection
     {
         return $this->bucketList;
     }
 
-    public function addBucketList(sharedProduct $bucketList): self
+    public function addBucketList(SharedProduct $bucketList): self
     {
         if (!$this->bucketList->contains($bucketList)) {
             $this->bucketList[] = $bucketList;
@@ -166,7 +176,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeBucketList(sharedProduct $bucketList): self
+    public function removeBucketList(SharedProduct $bucketList): self
     {
         if ($this->bucketList->removeElement($bucketList)) {
             // set the owning side to null (unless already changed)
@@ -178,5 +188,45 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(?string $gender): self
+    {
+        $this->gender = $gender;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SharedProduct>
+     */
+    public function getSharedProducts(): Collection
+    {
+        return $this->sharedProducts;
+    }
+
+    public function addSharedProduct(SharedProduct $sharedProduct): self
+    {
+        if (!$this->sharedProducts->contains($sharedProduct)) {
+            $this->sharedProducts[] = $sharedProduct;
+            $sharedProduct->setSharedWith($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSharedProduct(SharedProduct $sharedProduct): self
+    {
+        if ($this->sharedProducts->removeElement($sharedProduct)) {
+            // set the owning side to null (unless already changed)
+            if ($sharedProduct->getSharedWith() === $this) {
+                $sharedProduct->setSharedWith(null);
+            }
+        }
+
+        return $this;
+    }
 }

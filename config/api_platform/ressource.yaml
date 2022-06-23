@@ -1,0 +1,22 @@
+App\Entity\User:
+  attributes:
+    security: 'is_granted("ROLE_USER")'
+    collectionOperations:
+      get:
+        security: 'is_granted("ROLE_USER") and object.owner == user'
+    normalization_context:
+      groups: ["read"]
+    itemOperations:
+      get_shared_product:
+        method: GET
+        path: /users/{id}/sharedWithMe
+        controller: App\Controller\ApiController
+
+App\Entity\SharedProduct:
+  attributes:
+    security: 'is_granted("ROLE_USER")'
+    normalization_context:
+      groups: ["read"]
+App\Entity\Product:
+  attributes:
+    security: 'is_granted("ROLE_USER")'

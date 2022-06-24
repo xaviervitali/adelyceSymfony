@@ -16,7 +16,7 @@ class SharedProduct
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups("read")]
+    #[Groups("product")]
     private $id;
 
 

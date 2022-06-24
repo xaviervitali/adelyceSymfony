@@ -16,9 +16,10 @@ class Product
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups("read")]
+    #[Groups("read", "product")]
     private $id;
-    #[Groups("read")]
+
+    #[Groups("read", "product")]
     #[ORM\Column(type: 'string', length: 255)]
     private $name;
 
